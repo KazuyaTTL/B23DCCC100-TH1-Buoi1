@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Color</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .color-display {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 20px;
+        }
+        .color-section {
+            text-align: left;
+        }
+        h1 {
+            margin: 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .color-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            margin: 20px auto 0;
+            display: inline-block;
+        }
+        #colorHistoryContainer {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .color-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Random Color</h1>
+
+    <button id="changeColorBtn">Change Background Color</button>
+    <button id="undoBtn">Undo</button>
+    <button id="autoChangeBtn">Start Auto Change</button>
+
+    <div class="color-display">
+        <div class="color-section">
+            <h1 id="currentColor">Current Color:</h1>
+            <div class="color-box" id="colorBox"></div>
+        </div>
+
+        <div class="color-section">
+            <h1>Color History:</h1>
+            <div id="colorHistoryContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const colors = ['blue', 'red', 'yellow', 'green'];
+        const colorNames = {
+            blue: 'Blue',
+            red: 'Red',
+            yellow: 'Yellow',
+            green: 'Green'
+        };
+        let colorHistory = [];
+        let autoChangeInterval = null;
+
+        // Function to change the background color of the square
+        function changeBackgroundColor() {
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.getElementById('colorBox').style.backgroundColor = randomColor;
+            document.getElementById('currentColor').textContent = `Current Color:`;
+
+            // Add the color name to history
+            const colorHistoryContainer = document.getElementById('colorHistoryContainer');
+            const colorNameElement = document.createElement('div');
+            colorNameElement.textContent = colorNames[randomColor];
+            colorNameElement.classList.add('color-name');
+            colorNameElement.style.color = randomColor;
+            colorHistoryContainer.appendChild(colorNameElement);
+
+            colorHistory.push(randomColor);
+        }
+
+        // Function to undo the last color change
+        function undoColorChange() {
+            if (colorHistory.length > 0) {
+                colorHistory.pop(); // Remove the last color
+                const lastColor = colorHistory[colorHistory.length - 1] || 'white'; // Default to white if no history
+                document.getElementById('colorBox').style.backgroundColor = lastColor;
+
+                const colorHistoryContainer = document.getElementById('colorHistoryContainer');
+                colorHistoryContainer.removeChild(colorHistoryContainer.lastChild); // Remove the last color from history
+            }
+        }
+
+        // Function to start or stop auto-changing the background color
+        function toggleAutoChange() {
+            const autoChangeBtn = document.getElementById('autoChangeBtn');
+            if (autoChangeInterval) {
+                clearInterval(autoChangeInterval); // Stop the auto change
+                autoChangeInterval = null;
+                autoChangeBtn.textContent = 'Start Auto Change'; // Change button text
+            } else {
+                autoChangeInterval = setInterval(changeBackgroundColor, 1000); // Start auto change every second
+                autoChangeBtn.textContent = 'Stop Auto Change'; // Change button text
+            }
+        }
+
+        // Event listeners for buttons
+        document.getElementById('changeColorBtn').addEventListener('click', changeBackgroundColor);
+        document.getElementById('undoBtn').addEventListener('click', undoColorChange);
+        document.getElementById('autoChangeBtn').addEventListener('click', toggleAutoChange);
+    </script>
+
+</body>
+</html>
